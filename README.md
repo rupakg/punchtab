@@ -8,7 +8,7 @@ Ruby wrapper for [PunchTab API](http://www.punchtab.com/developer-docs), the wor
 gem install punchtab
 ```
 
-## Pre-requistes
+## Prerequisites
 
 1. Get a developer account at [PunchTab](http://www.punchtab.com).
 2. Make sure your PunchTab account is enabled for SSO authentication. Do so, by going to the developer account page,
@@ -18,7 +18,7 @@ and checking the 'Single Sign On (SSO)' checkbox.
 
 ## Getting Started
 
-1. Authenticate using Single Sign On (SSO):
+### Authenticate using Single Sign On (SSO):
 
 ```ruby
 # authenticate with PunchTab
@@ -40,7 +40,7 @@ puts "Access Token: #{client.access_token}"
 ```
 > Note: You can get all of the above values from your Punchtab [developer account page](https://www.punchtab.com/account/).
 
-2. Call other API methods:
+### Call other API methods:
 
 ```
 # check status
