@@ -24,10 +24,14 @@ module Punchtab
       @domain       = options[:domain]        # required
       @user_info    = options[:user_info]     # optional
 
+      Punchtab::API.headers 'Referer' => "http://#{@domain}"
+
       unless @client_id && @access_key && @secret_key && @domain
         raise Exception.new('Client Id, Access Key, Secret Key and Domain are required to authenticate, before using PunchTab services.')
       end
     end
+
+    ######### Authentication APIs
 
     # https://api.punchtab.com/v1/auth/sso
     def authenticate
@@ -46,7 +50,6 @@ module Punchtab
 
       # make the POST call
       path = '/auth/sso'
-      Punchtab::API.headers 'Referer' => "http://#{@domain}"
 
       # setup the post params
       post_data = {
@@ -72,7 +75,6 @@ module Punchtab
     def logout
       # make the POST call
       path = '/auth/logout'
-      Punchtab::API.headers 'Referer' => "http://#{@domain}"
 
       # setup the post params
       post_data = {
@@ -94,7 +96,6 @@ module Punchtab
     def status
       # make the POST call
       path = '/auth/status'
-      Punchtab::API.headers 'Referer' => "http://#{@domain}"
 
       # setup the post params
       post_data = {
@@ -111,6 +112,25 @@ module Punchtab
         end
       end
     end
+
+    ######### Activity APIs
+
+    # Required Parameters
+    # access_token - auth token of the user that you get through the authentication flow.
+    # Optional Parameters
+    # options<~Hash>
+    #   * 'limit' - specifies the number of activities.
+    #   * 'user_id' - retrieve the activity for a specific user_id, instead of the user currently logged in.
+    #   * 'activity_name' - retrieve only a list of activity from the activity_name.
+    # Return
+    #
+    def get_activity(options={})
+
+    end
+
+
+
+
   end
 
   class Client
