@@ -40,21 +40,57 @@ puts "Access Token: #{client.access_token}"
 ```
 > Note: You can get all of the above values from your Punchtab [developer account page](https://www.punchtab.com/account/).
 
-### Call other API methods:
+### Call other Authentication API methods
 
 ```
 # check status
 client.status
+```
 
+```
 # logout
 client.logout
 ```
+
+### Activity API methods
+
+```
+# get all activities
+client.get_activity
+```
+
+```
+# get 2 activities
+client.get_activity(:limit => 2)
+```
+
+```
+# get only 'like' activities
+client.get_activity(:activity_name => :like)
+```
+
+```
+# create a new activity, and assign it relevant 'points'
+client.create_activity(:comment, 600)
+```
+
+```
+# redeem offer for an activity using a 'reward_id'
+client.redeem_activity_offer(123)
+```
+
+### Leaderboard API methods
+
+### Reward API methods
+
+### User API methods
 
 ## Features
 
 
 ## Roadmap
 
+* Add tests
 
 ## Note on Patches/Pull Requests
 
