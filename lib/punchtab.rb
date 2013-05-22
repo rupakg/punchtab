@@ -76,12 +76,18 @@ module Punchtab
           :signature    => signature
       }
       raw_response = Punchtab::API.post(path, :body => post_data)
-      response = Hashie::Mash.new(raw_response)
-      if response.status == 'connected'
-        @access_token = response.authResponse.accessToken
-        return response
+      if raw_response.code == 200
+        response = Hashie::Mash.new(raw_response)
+        if response.status == 'connected'
+          @access_token = response.authResponse.accessToken
+          return response
+        else
+          if response.error
+            raise Exception.new(response)
+          end
+        end
       else
-        if response.error
+        if raw_response.message
           raise Exception.new(raw_response)
         end
       end
@@ -98,14 +104,21 @@ module Punchtab
         :key    => @access_key
       }
       raw_response = Punchtab::API.post(path, :body => post_data)
-      response = Hashie::Mash.new(raw_response)
-      if response.status == 'disconnected'
-        return response
+      if raw_response.code == 200
+        response = Hashie::Mash.new(raw_response)
+        if response.status == 'disconnected'
+          return response
+        else
+          if response.error
+            raise Exception.new(response)
+          end
+        end
       else
-        if response.error
+        if raw_response.message
           raise Exception.new(raw_response)
         end
       end
+
     end
 
     # https://api.punchtab.com/v1/auth/status
@@ -119,11 +132,17 @@ module Punchtab
           :key    => @access_key
       }
       raw_response = Punchtab::API.post(path, :body => post_data)
-      response = Hashie::Mash.new(raw_response)
-      if response.status == 'connected'
-        return response
+      if raw_response.code == 200
+        response = Hashie::Mash.new(raw_response)
+        if response.status == 'connected'
+          return response
+        else
+          if response.error
+            raise Exception.new(response)
+          end
+        end
       else
-        if response.error
+        if raw_response.message
           raise Exception.new(raw_response)
         end
       end
@@ -162,8 +181,6 @@ module Punchtab
           raise Exception.new(raw_response)
         end
       end
-      #puts 'Raw Response: '
-      #puts raw_response.body, raw_response.code, raw_response.message, raw_response.headers.inspect
     end
 
     # Required Parameters
@@ -193,7 +210,27 @@ module Punchtab
           raise Exception.new(raw_response)
         end
       end
+    end
 
+    # Required Parameters
+    #   * 'access_token' - auth token of the user that you get through the authentication flow.
+    #   * 'reward_id'<~Integer> - reward id for the activity offer to redeem
+    # Return
+    # curl i -X POST 'reward_id=123' https://api.punchtab.com/v1/activity/redeem?access_token=<access_token>
+    def redeem_activity_offer(reward_id)
+
+      # make the POST call
+      path = '/activity/redeem'
+
+      options = {:access_token => @access_token}
+      raw_response = Punchtab::API.post(path, {:body => "reward_id=#{reward_id}", :query => options })
+      if raw_response.code == 200
+        response = Punchtab::Utils.objectify(raw_response)
+      else
+        if raw_response.message
+          raise Exception.new(raw_response)
+        end
+      end
     end
   end
 
@@ -201,6 +238,7 @@ module Punchtab
 
     attr_reader :access_token
 
+    # authentication methods
     def initialize(options = {})
       # initialize the API
       @api = Punchtab::API.new(options)
@@ -222,6 +260,7 @@ module Punchtab
       @api.logout
     end
 
+    # activity methods
     def get_activity(options={})
       @api.get_activity(options)
     end
@@ -229,5 +268,27 @@ module Punchtab
     def create_activity(activity_name, options={})
       @api.create_activity(activity_name, options)
     end
+
+    def redeem_activity_offer(reward_id)
+      @api.redeem_activity_offer(reward_id)
+    end
+
+
+  end
+end
+
+### Hack monkey-patch to rescue parsing errors
+module HTTParty
+  class Request
+
+    private
+    def parse_response(body)
+      begin
+        parser.call(body, format)
+      rescue Exception
+        body
+      end
+    end
+
   end
 end
