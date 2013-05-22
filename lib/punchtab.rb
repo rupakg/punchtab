@@ -27,7 +27,7 @@ module Punchtab
     base_uri BASE_API_URL
     format :json
     # enable debug mode
-    if ENV['PUNCHTAB_DEBUG'] == 1
+    if ENV['PUNCHTAB_DEBUG'] == '1'
       debug_output
     end
 
@@ -132,26 +132,29 @@ module Punchtab
     ######### Activity APIs
 
     # Required Parameters
-    #   * access_token - auth token of the user that you get through the authentication flow.
+    #   * 'access_token' - auth token of the user that you get through the authentication flow.
     # Optional Parameters
-    #   * 'activity_name' - retrieve only a list of activity from the activity_name.
     #   options<~Hash>
-    #     * 'query'<~Hash>
-    #       * 'limit' - specifies the number of activities.
-    #       * 'user_id' - retrieve the activity for a specific user_id, instead of the user currently logged in.
+    #     * 'activity_name' - retrieve only a list of activities for the activity.
+    #     * 'limit' - specifies the number of activities.
+    #     * 'user_id' - retrieve the activity for a specific user_id, instead of the user currently logged in.
     # Return
     # https://api.punchtab.com/v1/activity/[activity_name]?access_token=<access_token>
-    def get_activity(activity_name = nil, options={})
+    def get_activity(options={})
+      activity_name = options.delete(:activity_name)
+      unless activity_name.nil? || ACTIVITIES.include?(activity_name.to_s)
+        puts "Specify an activity from the list: '#{ACTIVITIES.join(',')}'"
+        return
+      end
       # make the GET call
-      suffix = "?access_token=#{@access_token}"
       if activity_name
         path = "/activity/#{activity_name}"
       else
         path = '/activity'
       end
-      path += suffix
 
-      raw_response = Punchtab::API.get(path, options)
+      options.merge!({:access_token => @access_token})
+      raw_response = Punchtab::API.get(path, :query => options)
       if raw_response.code == 200
         response = Punchtab::Utils.objectify(raw_response)
       else
@@ -164,11 +167,9 @@ module Punchtab
     end
 
     # Required Parameters
-    #   * access_token - auth token of the user that you get through the authentication flow.
+    #   * 'access_token' - auth token of the user that you get through the authentication flow.
     #   * 'activity_name' - retrieve only a list of activity from the activity_name.
-    #   * points<~Integer> - points for the activity, default is 100
-    # Optional Parameters
-    #   * 'body'<~Hash>
+    #   * 'points'<~Integer> - points for the activity, default is 100
     # Return
     # curl i -X POST 'points=200' https://api.punchtab.com/v1/activity/<activity_name>?access_token=<access_token>
     def create_activity(activity_name, points=100)
@@ -177,16 +178,14 @@ module Punchtab
         return
       end
       # make the POST call
-      suffix = "?access_token=#{@access_token}"
       if activity_name
         path = "/activity/#{activity_name}"
       else
         path = '/activity'
       end
-      path += suffix
 
-      options = {:body => "points=#{points}"}
-      raw_response = Punchtab::API.post(path, options)
+      options = {:access_token => @access_token}
+      raw_response = Punchtab::API.post(path, {:body => "points=#{points}", :query => options})
       if raw_response.code == 200
         response = Punchtab::Utils.objectify(raw_response)
       else
@@ -224,8 +223,7 @@ module Punchtab
     end
 
     def get_activity(options={})
-      activity_name = options.delete(:activity_name)
-      @api.get_activity(activity_name, options)
+      @api.get_activity(options)
     end
 
     def create_activity(activity_name, options={})
