@@ -62,21 +62,9 @@ module Punchtab
           :signature    => signature
       }
       raw_response = Punchtab::API.post(path, :body => post_data)
-      if raw_response.code == 200
-        response = Hashie::Mash.new(raw_response)
-        if response.status == 'connected'
-          @access_token = response.authResponse.accessToken
-          return response
-        else
-          if response.error
-            raise Exception.new(response)
-          end
-        end
-      else
-        if raw_response.message
-          raise Exception.new(raw_response)
-        end
-      end
+      response = Punchtab::Utils.process_response(raw_response)
+      # return the access token
+      @access_token = response.authResponse.accessToken
     end
 
     # https://api.punchtab.com/v1/auth/logout
@@ -90,21 +78,7 @@ module Punchtab
         :key    => @access_key
       }
       raw_response = Punchtab::API.post(path, :body => post_data)
-      if raw_response.code == 200
-        response = Hashie::Mash.new(raw_response)
-        if response.status == 'disconnected'
-          return response
-        else
-          if response.error
-            raise Exception.new(response)
-          end
-        end
-      else
-        if raw_response.message
-          raise Exception.new(raw_response)
-        end
-      end
-
+      Punchtab::Utils.process_response(raw_response)
     end
 
     # https://api.punchtab.com/v1/auth/status
@@ -118,20 +92,7 @@ module Punchtab
           :key    => @access_key
       }
       raw_response = Punchtab::API.post(path, :body => post_data)
-      if raw_response.code == 200
-        response = Hashie::Mash.new(raw_response)
-        if response.status == 'connected'
-          return response
-        else
-          if response.error
-            raise Exception.new(response)
-          end
-        end
-      else
-        if raw_response.message
-          raise Exception.new(raw_response)
-        end
-      end
+      Punchtab::Utils.process_response(raw_response)
     end
 
     ######### Activity APIs
@@ -147,8 +108,8 @@ module Punchtab
     # https://api.punchtab.com/v1/activity/[activity_name]?access_token=<access_token>
     def get_activity(options={})
       activity_name = options.delete(:activity_name)
-      unless activity_name.nil? || ACTIVITIES.include?(activity_name.to_s)
-        puts "Specify an activity from the list: '#{ACTIVITIES.join(',')}'"
+      unless activity_name.nil? || activity_valid?(activity_name)
+        puts "Specify an activity from the list: '#{activity_list}'"
         return
       end
       # make the GET call
@@ -160,13 +121,7 @@ module Punchtab
 
       options.merge!({:access_token => @access_token})
       raw_response = Punchtab::API.get(path, :query => options)
-      if raw_response.code == 200
-        response = Punchtab::Utils.objectify(raw_response)
-      else
-        if raw_response.message
-          raise Exception.new(raw_response)
-        end
-      end
+      Punchtab::Utils.process_response(raw_response)
     end
 
     # Required Parameters
@@ -176,8 +131,8 @@ module Punchtab
     # Return
     # curl i -X POST 'points=200' https://api.punchtab.com/v1/activity/<activity_name>?access_token=<access_token>
     def create_activity(activity_name, points=100)
-      unless ACTIVITIES.include?(activity_name.to_s)
-        puts "Specify an activity from the list: '#{ACTIVITIES.join(',')}'"
+      unless activity_valid?(activity_name)
+        puts "Specify an activity from the list: '#{activity_list}'"
         return
       end
       # make the POST call
@@ -189,13 +144,7 @@ module Punchtab
 
       options = {:access_token => @access_token}
       raw_response = Punchtab::API.post(path, {:body => "points=#{points}", :query => options})
-      if raw_response.code == 200
-        response = Punchtab::Utils.objectify(raw_response)
-      else
-        if raw_response.message
-          raise Exception.new(raw_response)
-        end
-      end
+      Punchtab::Utils.process_response(raw_response)
     end
 
     # Required Parameters
@@ -210,13 +159,32 @@ module Punchtab
 
       options = {:access_token => @access_token}
       raw_response = Punchtab::API.post(path, {:body => "reward_id=#{reward_id}", :query => options })
-      if raw_response.code == 200
-        response = Punchtab::Utils.objectify(raw_response)
-      else
-        if raw_response.message
-          raise Exception.new(raw_response)
-        end
-      end
+      Punchtab::Utils.process_response(raw_response)
+    end
+
+  ######### User APIs
+
+    # Required Parameters
+    #   * 'access_token' - auth token of the user that you get through the authentication flow.
+    # Return
+    # https://api.punchtab.com/v1/user?access_token=<access_token>
+    def user
+      # make the GET call
+      path = '/user'
+
+      options = {:access_token => @access_token}
+      raw_response = Punchtab::API.get(path, :query => options)
+      Punchtab::Utils.process_response(raw_response)
+    end
+
+    private
+
+    def activity_valid?(activity_name)
+      ACTIVITIES.include?(activity_name.to_s)
+    end
+
+    def activity_list
+      ACTIVITIES.join(',')
     end
   end
 

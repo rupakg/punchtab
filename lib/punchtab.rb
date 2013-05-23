@@ -17,17 +17,13 @@ module Punchtab
       Punchtab::VERSION
     end
 
-    # authentication methods
+    # authentication api methods
     def initialize(options = {})
       # initialize the API
       @api = Punchtab::API.new(options)
 
       # authenticate
-      response = @api.authenticate
-      if response
-        # get the access token
-        @access_token = @api.access_token
-      end
+      @access_token = @api.authenticate
 
     end
 
@@ -39,7 +35,7 @@ module Punchtab
       @api.logout
     end
 
-    # activity methods
+    # activity api methods
     def get_activity(options={})
       @api.get_activity(options)
     end
@@ -52,7 +48,10 @@ module Punchtab
       @api.redeem_activity_offer(reward_id)
     end
 
-
+    # user api methods
+    def user
+      @api.user
+    end
   end
 end
 
