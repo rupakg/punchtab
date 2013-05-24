@@ -7,9 +7,9 @@ Gem::Specification.new do |s|
   s.version     = Punchtab::VERSION
   s.platform    = Gem::Platform::RUBY
   s.authors     = ['Rupak Ganguly']
-  s.date        = %q{2013-05-07}
+  s.date        = %q{2013-05-24}
   s.email       = ['rupakg@gmail.com']
-  s.homepage    = %q{http://github.com/rupakg/ruby-punchtab}
+  s.homepage    = %q{http://github.com/rupakg/punchtab}
   s.summary     = %q{Ruby wrapper for PunchTab API}
   s.description = %q{Ruby wrapper for PunchTab API. PunchTab is the world's first instant loyalty platform.}
   s.license     = 'MIT'

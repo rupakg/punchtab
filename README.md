@@ -194,7 +194,7 @@ c.get_reward
   "reward_id"=>44444}]
 ```
 
-```
+```ruby
 # get specified number of rewards
 c.get_reward(:limit => 1)
 => [{"merchantname"=>"Target",
