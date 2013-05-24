@@ -154,7 +154,7 @@ client.redeem_activity_offer(123)
 
 ```ruby
 # get details about the current user
-c.get_user
+client.get_user
 => {"first_name"=>"Rupak",
  "last_name"=>"Ganguly",
  "user_id"=>111111,
@@ -175,7 +175,7 @@ c.get_user
 
 ```ruby
 # get all the rewards
-c.get_reward
+client.get_reward
 => [{"merchantname"=>"Target",
   "image"=>{},
   "label"=>"$5 Target Gift Card",
@@ -196,7 +196,7 @@ c.get_reward
 
 ```ruby
 # get specified number of rewards
-c.get_reward(:limit => 1)
+client.get_reward(:limit => 1)
 => [{"merchantname"=>"Target",
   "image"=>{},
   "label"=>"$5 Target Gift Card",
@@ -233,7 +233,7 @@ client.get_leaderboard
 
 ```ruby
 # get the specified user's leaderboard
-c.get_leaderboard(111111)
+client.get_leaderboard(111111)
 => [{"username"=>"111111_1111",
   "recent_activity"=>
    {"domain"=>"www.webintellix.com",
@@ -255,7 +255,7 @@ c.get_leaderboard(111111)
 
 ```ruby
 # get leaderboard for current user with optional parameters
-c.get_leaderboard(:days => 10, :limit => 3, :page => 1)
+client.get_leaderboard(:days => 10, :limit => 3, :page => 1)
 => [{"username"=>"111111_1111",
   "user_id"=>111111,
   "name"=>"Rupak Ganguly",
@@ -277,7 +277,7 @@ c.get_leaderboard(:days => 10, :limit => 3, :page => 1)
 
 ```ruby
 # get leaderboard for specified user's leaderboard, with optional parameters
-c.get_leaderboard(:with => 2173196, :days => 10, :limit => 3, :page => 1)
+client.get_leaderboard(:with => 111111, :days => 10, :limit => 3, :page => 1)
 => [{"username"=>"111111_1111",
   "user_id"=>111111,
   "name"=>"Rupak Ganguly",
@@ -301,15 +301,17 @@ c.get_leaderboard(:with => 2173196, :days => 10, :limit => 3, :page => 1)
 
 * Add tests
 
-## Note on Patches/Pull Requests
+## Contributions
+
+Patches and Pull Requests are most welcome.
 
 * Fork the project.
 * Make your feature addition or bug fix.
 * Add tests for it. This is important so I don't break it in a future version unintentionally.
-* Commit, do not mess with rakefile, version, or history. (if you want to have your own version, that is fine but
-  bump version in a commit by itself I can ignore when I pull)
+* Commit, but do not mess with rakefile, version, or history. (if you want to have your own version, that is fine but
+  bump version in a commit by itself, so I can ignore when I pull)
 * Send me a pull request. Bonus points for topic branches.
 
 ## Copyright
 
-Copyright (c) 2013 [Rupak Ganguly](http://rails.webintellix.com). See [LICENSE](https://github.com/rupakg/punchtab/blob/master/LICENSE) for details.
+Copyright (c) 2013 [Rupak Ganguly](http://about.me/rupakg). See [LICENSE](https://github.com/rupakg/punchtab/blob/master/LICENSE) for details.
