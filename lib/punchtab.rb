@@ -49,9 +49,20 @@ module Punchtab
     end
 
     # user api methods
-    def user
-      @api.user
+    def get_user
+      @api.get_user
     end
+
+    # reward api methods
+    def get_reward(options={})
+      @api.get_reward(options)
+    end
+
+    # leaderboard api methods
+    def get_leaderboard(options={})
+      @api.get_leaderboard(options)
+    end
+
   end
 end
 

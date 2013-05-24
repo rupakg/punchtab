@@ -67,7 +67,12 @@ module Punchtab
       @access_token = response.authResponse.accessToken
     end
 
-    # https://api.punchtab.com/v1/auth/logout
+    # Required Parameters
+    #   None
+    # Optional Parameters
+    #   None
+    # Return
+    #  https://api.punchtab.com/v1/auth/logout
     def logout
       # make the POST call
       path = '/auth/logout'
@@ -81,6 +86,11 @@ module Punchtab
       Punchtab::Utils.process_response(raw_response)
     end
 
+    # Required Parameters
+    #   None
+    # Optional Parameters
+    #   None
+    # Return
     # https://api.punchtab.com/v1/auth/status
     def status
       # make the POST call
@@ -98,12 +108,12 @@ module Punchtab
     ######### Activity APIs
 
     # Required Parameters
-    #   * 'access_token' - auth token of the user that you get through the authentication flow.
+    #   None
     # Optional Parameters
     #   options<~Hash>
-    #     * 'activity_name' - retrieve only a list of activities for the activity.
-    #     * 'limit' - specifies the number of activities.
-    #     * 'user_id' - retrieve the activity for a specific user_id, instead of the user currently logged in.
+    #     * 'activity_name'<~String> - retrieve only a list of activities for the activity.
+    #     * 'limit'<~Integer> - limits the number of activities.
+    #     * 'user_id'<~Integer> - retrieve the activity for a specific user_id, instead of the user currently logged in.
     # Return
     # https://api.punchtab.com/v1/activity/[activity_name]?access_token=<access_token>
     def get_activity(options={})
@@ -125,9 +135,10 @@ module Punchtab
     end
 
     # Required Parameters
-    #   * 'access_token' - auth token of the user that you get through the authentication flow.
-    #   * 'activity_name' - retrieve only a list of activity from the activity_name.
+    #   * 'activity_name'<~String> - retrieve only a list of activity from the activity_name.
     #   * 'points'<~Integer> - points for the activity, default is 100
+    # Optional Parameters
+    #   None
     # Return
     # curl i -X POST 'points=200' https://api.punchtab.com/v1/activity/<activity_name>?access_token=<access_token>
     def create_activity(activity_name, points=100)
@@ -148,8 +159,9 @@ module Punchtab
     end
 
     # Required Parameters
-    #   * 'access_token' - auth token of the user that you get through the authentication flow.
     #   * 'reward_id'<~Integer> - reward id for the activity offer to redeem
+    # Optional Parameters
+    #   None
     # Return
     # curl i -X POST 'reward_id=123' https://api.punchtab.com/v1/activity/redeem?access_token=<access_token>
     def redeem_activity_offer(reward_id)
@@ -165,10 +177,12 @@ module Punchtab
   ######### User APIs
 
     # Required Parameters
-    #   * 'access_token' - auth token of the user that you get through the authentication flow.
+    #   None
+    # Optional Parameters
+    #   None
     # Return
     # https://api.punchtab.com/v1/user?access_token=<access_token>
-    def user
+    def get_user
       # make the GET call
       path = '/user'
 
@@ -176,6 +190,46 @@ module Punchtab
       raw_response = Punchtab::API.get(path, :query => options)
       Punchtab::Utils.process_response(raw_response)
     end
+
+  ######### Reward APIs
+
+    # Required Parameters
+    #   None
+    # Optional Parameters
+    #   options<~Hash>
+    #     * 'limit'<~Integer> - limits the number of rewards.
+    # Return
+    # https://api.punchtab.com/v1/reward?access_token=<access_token>
+    def get_reward(options={})
+      # make the GET call
+      path = '/reward'
+
+      options.merge!({:access_token => @access_token})
+      raw_response = Punchtab::API.get(path, :query => options)
+      Punchtab::Utils.process_response(raw_response)
+    end
+
+  ######### Leaderboard APIs
+
+    # Required Parameters
+    #   None
+    # Optional Parameters
+    #   options<~Hash>
+    #     * 'with'<~String> - User Id or 'me'. Defaults to 'me', which will get a leaderboard with the current user.
+    #     * 'days'<~String> - if set to 'all' returns the leaderboard from the beginning using redeemable points, otherwise it returns the leaderboard from the last 30 days.
+    #     * 'limit'<~Integer> - limits the number of users in the leaderboard.
+    #     * 'page'<~Integer> - specifies the page of result you want (rank will be relative to the page).
+    # Return
+    # https://api.punchtab.com/v1/leaderboard?access_token=<access_token>
+    def get_leaderboard(options={})
+      # make the GET call
+      path = '/leaderboard'
+
+      options.merge!({:with => 'me', :access_token => @access_token})
+      raw_response = Punchtab::API.get(path, :query => options)
+      Punchtab::Utils.process_response(raw_response)
+    end
+
 
     private
 
