@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset='utf-8'>
+    <meta http-equiv="X-UA-Compatible" content="chrome=1">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    <link href='https://fonts.googleapis.com/css?family=Architects+Daughter' rel='stylesheet' type='text/css'>
+    <link rel="stylesheet" type="text/css" href="stylesheets/stylesheet.css" media="screen" />
+    <link rel="stylesheet" type="text/css" href="stylesheets/pygment_trac.css" media="screen" />
+    <link rel="stylesheet" type="text/css" href="stylesheets/print.css" media="print" />
+
+    <!--[if lt IE 9]>
+    <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+
+    <title>punchtab by rupakg</title>
+  </head>
+
+  <body>
+    <header>
+      <div class="inner">
+        <h1>punchtab</h1>
+        <h2>Ruby wrapper for PunchTab API.</h2>
+        <a href="https://github.com/rupakg/punchtab" class="button"><small>View project on</small>GitHub</a>
+      </div>
+    </header>
+
+    <div id="content-wrapper">
+      <div class="inner clearfix">
+        <section id="main-content">
+          <h1>punchtab</h1>
+
+<p>Ruby wrapper for <a href="http://www.punchtab.com/developer-docs">PunchTab API</a>, the world's first instant loyalty platform.</p>
+
+<h2>Installation</h2>
+
+<pre><code>gem install punchtab
+</code></pre>
+
+<h2>Prerequisites</h2>
+
+<ol>
+<li>Get a developer account at <a href="http://www.punchtab.com">PunchTab</a>.</li>
+<li>Make sure your PunchTab account is enabled for SSO authentication. Do so, by going to the developer account page, and checking the 'Single Sign On (SSO)' checkbox.</li>
+</ol><p><img src="https://github.com/rupakg/punchtab/blob/master/punchtab-enable-sso.png" alt="Enable SSO authentication for PunchTab account"></p>
+
+<h2>Getting Started</h2>
+
+<h3>Authenticate using Single Sign On (SSO)</h3>
+
+<div class="highlight"><pre><span class="c1"># authenticate with PunchTab</span>
+<span class="n">client</span> <span class="o">=</span> <span class="ss">Punchtab</span><span class="p">:</span><span class="ss">:Client</span><span class="o">.</span><span class="n">new</span><span class="p">(</span>
+  <span class="ss">:client_id</span>  <span class="o">=&gt;</span> <span class="s1">'your client_id'</span><span class="p">,</span>
+  <span class="ss">:access_key</span> <span class="o">=&gt;</span> <span class="s1">'your access_key'</span><span class="p">,</span>
+  <span class="ss">:secret_key</span> <span class="o">=&gt;</span> <span class="s1">'your secret_key'</span><span class="p">,</span>
+  <span class="ss">:domain</span>     <span class="o">=&gt;</span> <span class="s1">'www.mydomain.com'</span><span class="p">,</span>
+  <span class="ss">:user_info</span> <span class="o">=&gt;</span> <span class="p">{</span>
+    <span class="ss">:first_name</span> <span class="o">=&gt;</span> <span class="s1">'your first_name'</span><span class="p">,</span>
+    <span class="ss">:last_name</span>  <span class="o">=&gt;</span> <span class="s1">'your last_name'</span><span class="p">,</span>
+    <span class="ss">:email</span>      <span class="o">=&gt;</span> <span class="s1">'me@mydomain.com'</span><span class="p">}</span>
+<span class="p">)</span>
+<span class="c1"># if authentication is successful, you should get an access token back</span>
+<span class="nb">puts</span> <span class="s2">"Access Token: </span><span class="si">#{</span><span class="n">client</span><span class="o">.</span><span class="n">access_token</span><span class="si">}</span><span class="s2">"</span>
+
+<span class="c1"># if authentication fails, an exception is thrown</span>
+
+</pre></div>
+
+<blockquote>
+<p>Note: You can get all of the above values from your PunchTab <a href="https://www.punchtab.com/account/">developer account page</a>.</p>
+</blockquote>
+
+<h3>Authentication</h3>
+
+<div class="highlight"><pre><span class="c1"># check authentication status</span>
+<span class="n">client</span><span class="o">.</span><span class="n">status</span>
+</pre></div>
+
+<div class="highlight"><pre><span class="c1"># logout</span>
+<span class="n">client</span><span class="o">.</span><span class="n">logout</span>
+</pre></div>
+
+<h3>Activity</h3>
+
+<div class="highlight"><pre><span class="c1"># get all activities</span>
+<span class="n">client</span><span class="o">.</span><span class="n">get_activity</span>
+</pre></div>
+
+<div class="highlight"><pre><span class="c1"># get 2 activities</span>
+<span class="n">client</span><span class="o">.</span><span class="n">get_activity</span><span class="p">(</span><span class="ss">:limit</span> <span class="o">=&gt;</span> <span class="mi">2</span><span class="p">)</span>
+</pre></div>
+
+<div class="highlight"><pre><span class="c1"># get only 'like' activities</span>
+<span class="n">client</span><span class="o">.</span><span class="n">get_activity</span><span class="p">(</span><span class="ss">:activity_name</span> <span class="o">=&gt;</span> <span class="ss">:like</span><span class="p">)</span>
+</pre></div>
+
+<div class="highlight"><pre><span class="c1"># create a new activity, and assign it relevant 'points'</span>
+<span class="n">client</span><span class="o">.</span><span class="n">create_activity</span><span class="p">(</span><span class="ss">:comment</span><span class="p">,</span> <span class="mi">600</span><span class="p">)</span>
+</pre></div>
+
+<div class="highlight"><pre><span class="c1"># redeem offer for an activity using a 'reward_id'</span>
+<span class="n">client</span><span class="o">.</span><span class="n">redeem_activity_offer</span><span class="p">(</span><span class="mi">123</span><span class="p">)</span>
+</pre></div>
+
+<h3>User</h3>
+
+<div class="highlight"><pre><span class="c1"># get details about the current user</span>
+<span class="n">client</span><span class="o">.</span><span class="n">get_user</span>
+</pre></div>
+
+<h3>Reward</h3>
+
+<div class="highlight"><pre><span class="c1"># get all the rewards</span>
+<span class="n">client</span><span class="o">.</span><span class="n">get_reward</span>
+</pre></div>
+
+<div class="highlight"><pre><span class="c1"># get specified number of rewards</span>
+<span class="n">client</span><span class="o">.</span><span class="n">get_reward</span><span class="p">(</span><span class="ss">:limit</span> <span class="o">=&gt;</span> <span class="mi">1</span><span class="p">)</span>
+</pre></div>
+
+<h3>Leaderboard</h3>
+
+<div class="highlight"><pre><span class="c1"># get the current user's leaderboard</span>
+<span class="n">client</span><span class="o">.</span><span class="n">get_leaderboard</span>
+</pre></div>
+
+<div class="highlight"><pre><span class="c1"># get the specified user's leaderboard</span>
+<span class="n">client</span><span class="o">.</span><span class="n">get_leaderboard</span><span class="p">(</span><span class="mi">111111</span><span class="p">)</span>
+</pre></div>
+
+<div class="highlight"><pre><span class="c1"># get leaderboard for current user with optional parameters</span>
+<span class="n">client</span><span class="o">.</span><span class="n">get_leaderboard</span><span class="p">(</span><span class="ss">:days</span> <span class="o">=&gt;</span> <span class="mi">10</span><span class="p">,</span> <span class="ss">:limit</span> <span class="o">=&gt;</span> <span class="mi">3</span><span class="p">,</span> <span class="ss">:page</span> <span class="o">=&gt;</span> <span class="mi">1</span><span class="p">)</span>
+</pre></div>
+
+<div class="highlight"><pre><span class="c1"># get leaderboard for specified user's leaderboard, with optional parameters</span>
+<span class="n">client</span><span class="o">.</span><span class="n">get_leaderboard</span><span class="p">(</span><span class="ss">:with</span> <span class="o">=&gt;</span> <span class="mi">111111</span><span class="p">,</span> <span class="ss">:days</span> <span class="o">=&gt;</span> <span class="mi">10</span><span class="p">,</span> <span class="ss">:limit</span> <span class="o">=&gt;</span> <span class="mi">3</span><span class="p">,</span> <span class="ss">:page</span> <span class="o">=&gt;</span> <span class="mi">1</span><span class="p">)</span>
+</pre></div>
+
+<h2>Contributions</h2>
+
+<p>Patches and Pull Requests are most welcome.</p>
+
+<ul>
+<li>Fork the project.</li>
+<li>Make your feature addition or bug fix.</li>
+<li>Add tests for it. This is important so I don't break it in a future version unintentionally.</li>
+<li>Commit, but do not mess with rakefile, version, or history. (if you want to have your own version, that is fine but bump version in a commit by itself, so I can ignore when I pull)</li>
+<li>Send me a pull request. Bonus points for topic branches.</li>
+</ul><h2>Copyright</h2>
+
+<p>Copyright (c) 2013 <a href="http://about.me/rupakg">Rupak Ganguly</a>. See <a href="https://github.com/rupakg/punchtab/blob/master/LICENSE">LICENSE</a> for details.</p>
+        </section>
+
+        <aside id="sidebar">
+          <a href="https://github.com/rupakg/punchtab/zipball/master" class="button">
+            <small>Download</small>
+            .zip file
+          </a>
+          <a href="https://github.com/rupakg/punchtab/tarball/master" class="button">
+            <small>Download</small>
+            .tar.gz file
+          </a>
+
+          <p class="repo-owner"><a href="https://github.com/rupakg/punchtab"></a> is maintained by <a href="https://github.com/rupakg">rupakg</a>.</p>
+
+          <p>This page was generated by <a href="pages.github.com">GitHub Pages</a> using the Architect theme by <a href="http://twitter.com/jasonlong">Jason Long</a>.</p>
+        </aside>
+      </div>
+    </div>
+
+  
+  </body>
+</html>
